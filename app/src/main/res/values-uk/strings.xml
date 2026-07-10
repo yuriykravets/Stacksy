@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Stacksy</string>
+    <string name="tagline">Будуй. Балансуй. Веселися.</string>
+    <string name="play">Грати</string>
+    <string name="home">На головну</string>
+    <string name="settings">Налаштування</string>
+    <string name="close">Закрити</string>
+    <string name="high_score">Рекорд</string>
+    <string name="high_score_value">Рекорд: %1$d</string>
+    <string name="score_value">Рахунок: %1$d</string>
+    <string name="combo_value">Комбо ×%1$d</string>
+    <string name="difficulty_value">Швидкість %1$.1f×</string>
+    <string name="sound">Звук</string>
+    <string name="sound_description">Відтворювати звуки гри</string>
+    <string name="vibration">Вібрація</string>
+    <string name="vibration_description">Вібровідгук для падінь і комбо</string>
+    <string name="tap_to_drop">Торкніться будь-де, щоб скинути</string>
+    <string name="drop_piece">Скинути рухомий предмет</string>
+    <string name="pause">Пауза</string>
+    <string name="resume">Продовжити</string>
+    <string name="game_paused">Гру призупинено</string>
+    <string name="game_over">Гру завершено</string>
+    <string name="new_high_score">Новий рекорд!</string>
+    <string name="restart">Зіграти ще</string>
+    <string name="combo_celebration">Ідеально! Комбо ×%1$d</string>
+    <string name="speed_up">Швидше! %1$.1f×</string>
+    <string name="unstable">Обережно…</string>
+    <string name="tower_preview">Весела вежа зі смаколиків і кумедних предметів</string>
+</resources>
