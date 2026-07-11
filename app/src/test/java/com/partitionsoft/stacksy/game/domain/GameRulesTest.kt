@@ -87,13 +87,17 @@ class GameRulesTest {
         assertEquals(3f, difficultyForScore(500), 0f)
         assertEquals(3f, difficultyForScore(999), 0f)
         assertEquals(4f, difficultyForScore(1_000), 0f)
-        assertEquals(4f, difficultyForScore(100_000), 0f)
+        assertEquals(4f, difficultyForScore(1_999), 0f)
+        assertEquals(5f, difficultyForScore(2_000), 0f)
+        assertEquals(5f, difficultyForScore(2_999), 0f)
+        assertEquals(6f, difficultyForScore(3_000), 0f)
+        assertEquals(6f, difficultyForScore(100_000), 0f)
     }
 
     @Test
     fun spawnHeightAlwaysClearsTheCurrentTower() {
         assertEquals(ACTIVE_SPAWN_BOTTOM, spawnBottomFor(towerTop = 0.3f), 0f)
-        assertEquals(1.65f, spawnBottomFor(towerTop = 1.2f), 0.0001f)
+        assertEquals(1.52f, spawnBottomFor(towerTop = 1.2f), 0.0001f)
     }
 
     @Test

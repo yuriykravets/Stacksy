@@ -1,6 +1,9 @@
 package com.partitionsoft.stacksy.game.presentation
 
 import android.graphics.Paint
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -36,7 +39,6 @@ import com.partitionsoft.stacksy.game.domain.SPAWN_GAP
 import com.partitionsoft.stacksy.game.domain.towerCenterForScreenPosition
 import kotlinx.coroutines.isActive
 import kotlin.math.max
-import kotlin.math.min
 
 @Composable
 fun GameBoard(
@@ -46,19 +48,40 @@ fun GameBoard(
     modifier: Modifier = Modifier,
 ) {
     val interactionSource = remember { MutableInteractionSource() }
-    val dropDescription = stringResource(R.string.drop_piece)
     var boardSize by remember { mutableStateOf(IntSize.Zero) }
+    val cameraOffset = remember { Animatable(0f) }
+    val dropDescription = stringResource(R.string.drop_piece)
     val towerTop = uiState.stack.maxOfOrNull { it.top } ?: 0f
     val sceneTop = uiState.activePiece?.piece?.let { active ->
         max(ACTIVE_SPAWN_BOTTOM, towerTop + SPAWN_GAP) + active.height
     } ?: towerTop
-    val boardZoom = calculateBoardZoom(boardSize, sceneTop)
+    val boardZoom = 1f
+    val targetCameraOffset = if (boardSize.width > 0) {
+        val viewportHeight = boardSize.height * (GROUND_FRACTION - PLAYABLE_TOP_FRACTION)
+        val visibleWorldHeight = viewportHeight / (boardSize.width * boardZoom)
+        max(0f, sceneTop - visibleWorldHeight)
+    } else {
+        0f
+    }
     val movingScreenCenter = uiState.activePiece
         ?.takeIf { it.motion == PieceMotion.Moving }
         ?.let { movingScreenCenter(it.piece, boardZoom) }
     val emojiPaint = remember {
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             textAlign = Paint.Align.CENTER
+        }
+    }
+    LaunchedEffect(targetCameraOffset) {
+        if (targetCameraOffset > cameraOffset.value && uiState.stack.size > 1) {
+            cameraOffset.animateTo(
+                targetValue = targetCameraOffset,
+                animationSpec = tween(
+                    durationMillis = CAMERA_PAN_DURATION_MILLIS,
+                    easing = FastOutSlowInEasing,
+                ),
+            )
+        } else {
+            cameraOffset.snapTo(targetCameraOffset)
         }
     }
     LaunchedEffect(uiState.status) {
@@ -88,29 +111,26 @@ fun GameBoard(
             )
             .testTag("game_board"),
     ) {
-        val playableTop = size.height * 0.18f
-        val groundY = size.height * 0.80f
-        val viewportHeight = groundY - playableTop
+        val playableTop = size.height * PLAYABLE_TOP_FRACTION
+        val groundY = size.height * GROUND_FRACTION
         val scale = size.width * boardZoom
         val xOffset = (size.width - scale) / 2f
-        val visibleWorldHeight = viewportHeight / scale
-        val cameraOffset = max(0f, sceneTop - visibleWorldHeight)
 
         clipRect(top = playableTop, bottom = groundY + 2f) {
             drawLine(
                 color = Color(0x553F334D),
-                start = Offset(xOffset, groundY + cameraOffset * scale),
-                end = Offset(xOffset + scale, groundY + cameraOffset * scale),
+                start = Offset(xOffset, groundY + cameraOffset.value * scale),
+                end = Offset(xOffset + scale, groundY + cameraOffset.value * scale),
                 strokeWidth = 4f,
             )
             uiState.stack.forEach { piece ->
-                drawPiece(piece, groundY, cameraOffset, scale, xOffset, emojiPaint)
+                drawPiece(piece, groundY, cameraOffset.value, scale, xOffset, emojiPaint)
             }
             uiState.activePiece?.let { active ->
                 drawPiece(
                     piece = active.piece,
                     groundY = groundY,
-                    cameraOffset = cameraOffset,
+                    cameraOffset = cameraOffset.value,
                     scale = scale,
                     xOffset = xOffset,
                     emojiPaint = emojiPaint,
@@ -151,20 +171,13 @@ private fun DrawScope.drawPiece(
         size = Size(width, height),
         cornerRadius = CornerRadius(height * 0.28f),
     )
-    emojiPaint.textSize = height * 0.66f
+    emojiPaint.textSize = height * 0.76f
     drawContext.canvas.nativeCanvas.drawText(
         pieceSymbol(piece.kind),
         centerX,
-        top + height * 0.72f,
+        top + height * 0.76f,
         emojiPaint,
     )
-}
-
-private fun calculateBoardZoom(size: IntSize, sceneTop: Float): Float {
-    if (size.width == 0 || sceneTop <= 0f) return 1f
-    val viewportHeight = size.height * (0.80f - 0.18f)
-    val fittedZoom = min(1f, viewportHeight / (size.width * sceneTop))
-    return max(0.38f, fittedZoom)
 }
 
 private fun movingScreenCenter(piece: GamePiece, boardZoom: Float): Float {
@@ -173,6 +186,10 @@ private fun movingScreenCenter(piece: GamePiece, boardZoom: Float): Float {
     val screenHalfWidth = worldHalfWidth * boardZoom
     return screenHalfWidth + progress * (1f - screenHalfWidth * 2f)
 }
+
+private const val PLAYABLE_TOP_FRACTION = 0.17f
+private const val GROUND_FRACTION = 0.84f
+private const val CAMERA_PAN_DURATION_MILLIS = 380
 
 private fun pieceColor(kind: PieceKind): Color = when (kind) {
     PieceKind.Basket -> Color(0xFFC98B52)

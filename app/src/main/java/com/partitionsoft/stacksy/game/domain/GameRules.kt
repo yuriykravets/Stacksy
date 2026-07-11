@@ -8,7 +8,7 @@ import kotlin.math.roundToInt
 const val BASE_HORIZONTAL_SPEED = 0.34f
 const val DROP_SPEED = 1.15f
 const val ACTIVE_SPAWN_BOTTOM = 1.03f
-const val SPAWN_GAP = 0.45f
+const val SPAWN_GAP = 0.32f
 const val STABILITY_TOLERANCE_RATIO = 0.04f
 
 fun overlapWidth(first: GamePiece, second: GamePiece): Float =
@@ -18,7 +18,9 @@ fun difficultyForScore(score: Int): Float = when {
     score < 200 -> 1f
     score < 500 -> 2f
     score < 1_000 -> 3f
-    else -> 4f
+    score < 2_000 -> 4f
+    score < 3_000 -> 5f
+    else -> 6f
 }
 
 fun visibleSpeedStep(difficulty: Float): Int = (difficulty * 10).roundToInt()
