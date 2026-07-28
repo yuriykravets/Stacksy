@@ -1,5 +1,7 @@
 package com.partitionsoft.stacksy.game.domain
 
+import com.partitionsoft.stacksy.collection.domain.SnackSet
+
 sealed interface GameStatus {
     data object Ready : GameStatus
     data object Playing : GameStatus
@@ -18,6 +20,52 @@ enum class PieceKind {
     Cookie,
     Watermelon,
     Present,
+    Sushi,
+    RiceBall,
+    Shrimp,
+    Ramen,
+    Bento,
+    Cake,
+    Candy,
+    IceCream,
+    Chocolate,
+    Lollipop,
+    Pineapple,
+    Mango,
+    Coconut,
+    Banana,
+    Kiwi,
+
+    ;
+
+    val emoji: String
+        get() = when (this) {
+            Basket -> "🧺"
+            Donut -> "🍩"
+            Burger -> "🍔"
+            Cheese -> "🧀"
+            Cupcake -> "🧁"
+            Pizza -> "🍕"
+            Fries -> "🍟"
+            Cookie -> "🍪"
+            Watermelon -> "🍉"
+            Present -> "🎁"
+            Sushi -> "🍣"
+            RiceBall -> "🍙"
+            Shrimp -> "🍤"
+            Ramen -> "🍜"
+            Bento -> "🍱"
+            Cake -> "🍰"
+            Candy -> "🍬"
+            IceCream -> "🍦"
+            Chocolate -> "🍫"
+            Lollipop -> "🍭"
+            Pineapple -> "🍍"
+            Mango -> "🥭"
+            Coconut -> "🥥"
+            Banana -> "🍌"
+            Kiwi -> "🥝"
+        }
 }
 
 enum class PieceMotion { Moving, Falling }
@@ -81,6 +129,10 @@ data class GameUiState(
     val stability: Float = 1f,
     val soundEnabled: Boolean = true,
     val vibrationEnabled: Boolean = true,
+    val selectedSnackSet: SnackSet = SnackSet.Classic,
+    val activeSnackSet: SnackSet = SnackSet.Classic,
+    val snackSetUses: Map<SnackSet, Int> = emptyMap(),
+    val continueUsed: Boolean = false,
     val newHighScore: Boolean = false,
     val stack: List<GamePiece> = emptyList(),
     val activePiece: ActivePiece? = null,

@@ -12,6 +12,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +30,8 @@ fun SettingsSheet(
     vibrationEnabled: Boolean,
     onSoundChanged: (Boolean) -> Unit,
     onVibrationChanged: (Boolean) -> Unit,
+    privacyOptionsRequired: Boolean,
+    onPrivacyOptions: () -> Unit,
     onDismiss: () -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss) {
@@ -56,6 +59,23 @@ fun SettingsSheet(
                 onCheckedChange = onVibrationChanged,
                 testTag = "vibration_switch",
             )
+            if (privacyOptionsRequired) {
+                Spacer(Modifier.height(8.dp))
+                OutlinedButton(
+                    onClick = onPrivacyOptions,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("privacy_options_button"),
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(stringResource(R.string.privacy_options))
+                        Text(
+                            text = stringResource(R.string.privacy_options_description),
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
+                }
+            }
             Spacer(Modifier.height(12.dp))
             Button(
                 onClick = onDismiss,

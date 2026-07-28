@@ -38,16 +38,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.partitionsoft.stacksy.R
+import com.partitionsoft.stacksy.collection.domain.SnackSet
+import com.partitionsoft.stacksy.collection.presentation.nameRes
 import com.partitionsoft.stacksy.settings.SettingsSheet
 
 @Composable
 fun HomeScreen(
     highScore: Int,
+    selectedSnackSet: SnackSet,
     soundEnabled: Boolean,
     vibrationEnabled: Boolean,
     onPlay: () -> Unit,
+    onOpenCollection: () -> Unit,
     onSoundChanged: (Boolean) -> Unit,
     onVibrationChanged: (Boolean) -> Unit,
+    privacyOptionsRequired: Boolean,
+    onPrivacyOptions: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var showSettings by rememberSaveable { mutableStateOf(false) }
@@ -84,7 +90,7 @@ fun HomeScreen(
             )
 
             Spacer(Modifier.height(36.dp))
-            SnackTowerPreview()
+            SnackTowerPreview(selectedSnackSet)
             Spacer(Modifier.height(32.dp))
 
             Card(
@@ -124,6 +130,22 @@ fun HomeScreen(
             }
             Spacer(Modifier.height(12.dp))
             OutlinedButton(
+                onClick = onOpenCollection,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp)
+                    .testTag("collection_button"),
+                shape = RoundedCornerShape(18.dp),
+            ) {
+                Text(
+                    stringResource(
+                        R.string.current_set,
+                        stringResource(selectedSnackSet.nameRes()),
+                    )
+                )
+            }
+            Spacer(Modifier.height(12.dp))
+            OutlinedButton(
                 onClick = { showSettings = true },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -142,6 +164,8 @@ fun HomeScreen(
             vibrationEnabled = vibrationEnabled,
             onSoundChanged = onSoundChanged,
             onVibrationChanged = onVibrationChanged,
+            privacyOptionsRequired = privacyOptionsRequired,
+            onPrivacyOptions = onPrivacyOptions,
             onDismiss = { showSettings = false },
         )
     }
@@ -149,7 +173,7 @@ fun HomeScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun SnackTowerPreview() {
+private fun SnackTowerPreview(snackSet: SnackSet = SnackSet.Classic) {
     val description = stringResource(R.string.tower_preview)
     Column(
         modifier = Modifier
@@ -158,9 +182,9 @@ private fun SnackTowerPreview() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy((-8).dp),
     ) {
-        PreviewPiece("🍕", 64)
-        PreviewPiece("🍩", 78)
-        PreviewPiece("🍔", 92)
+        PreviewPiece(snackSet.pieces[2].emoji, 64)
+        PreviewPiece(snackSet.pieces[1].emoji, 78)
+        PreviewPiece(snackSet.pieces[0].emoji, 92)
         PreviewPiece("🧺", 112)
     }
 }
