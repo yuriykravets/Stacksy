@@ -2,6 +2,9 @@ package com.partitionsoft.stacksy.game.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.partitionsoft.stacksy.collection.domain.REWARDED_SET_RUNS
+import com.partitionsoft.stacksy.collection.domain.SnackSet
+import com.partitionsoft.stacksy.collection.domain.canPlaySnackSet
 import com.partitionsoft.stacksy.core.preferences.PreferencesStore
 import com.partitionsoft.stacksy.game.domain.ActivePiece
 import com.partitionsoft.stacksy.game.domain.BASE_HORIZONTAL_SPEED
@@ -44,6 +47,7 @@ class GameViewModel(
     private var nextCelebrationId = 1
     private var resumeAfterLifecycle = false
     private var messageJob: Job? = null
+    private var startGameJob: Job? = null
 
     init {
         viewModelScope.launch {
@@ -53,6 +57,8 @@ class GameViewModel(
                         highScore = max(it.highScore, preferences.highScore),
                         soundEnabled = preferences.soundEnabled,
                         vibrationEnabled = preferences.vibrationEnabled,
+                        selectedSnackSet = preferences.selectedSnackSet,
+                        snackSetUses = preferences.snackSetUses,
                     )
                 }
             }
@@ -60,6 +66,13 @@ class GameViewModel(
     }
 
     fun startGame() {
+        if (startGameJob?.isActive == true) return
+        startGameJob = viewModelScope.launch {
+            startGame(preferencesStore.consumeSelectedSnackSetRun())
+        }
+    }
+
+    private fun startGame(snackSet: SnackSet) {
         messageJob?.cancel()
         nextPieceId = 1
         nextCelebrationId = 1
@@ -80,9 +93,11 @@ class GameViewModel(
                 multiplier = 1,
                 difficulty = 1f,
                 stability = 1f,
+                activeSnackSet = snackSet,
+                continueUsed = false,
                 newHighScore = false,
                 stack = listOf(base),
-                activePiece = createActivePiece(base.top),
+                activePiece = createActivePiece(base.top, snackSet),
                 placementMessage = null,
                 celebration = null,
             )
@@ -172,6 +187,41 @@ class GameViewModel(
         viewModelScope.launch { preferencesStore.setVibrationEnabled(enabled) }
     }
 
+    fun selectSnackSet(snackSet: SnackSet) {
+        val remainingUses = _uiState.value.snackSetUses[snackSet] ?: 0
+        if (!canPlaySnackSet(snackSet, remainingUses)) return
+        _uiState.update { it.copy(selectedSnackSet = snackSet) }
+        viewModelScope.launch { preferencesStore.selectSnackSet(snackSet) }
+    }
+
+    fun unlockSnackSet(snackSet: SnackSet) {
+        if (snackSet.isFree) return
+        _uiState.update {
+            it.copy(
+                selectedSnackSet = snackSet,
+                snackSetUses = it.snackSetUses + (snackSet to REWARDED_SET_RUNS),
+            )
+        }
+        viewModelScope.launch { preferencesStore.unlockSnackSet(snackSet) }
+    }
+
+    fun continueGame() {
+        val state = _uiState.value
+        val towerTop = state.stack.lastOrNull()?.top ?: return
+        if (state.status != GameStatus.GameOver || state.continueUsed) return
+        _uiState.update {
+            it.copy(
+                status = GameStatus.Playing,
+                combo = 0,
+                multiplier = 1,
+                continueUsed = true,
+                activePiece = createActivePiece(towerTop, state.activeSnackSet),
+                placementMessage = null,
+                celebration = null,
+            )
+        }
+    }
+
     private fun moveHorizontally(active: ActivePiece, delta: Float, difficulty: Float) {
         val speed = BASE_HORIZONTAL_SPEED * difficulty
         val halfWidth = active.piece.width / 2f
@@ -234,7 +284,7 @@ class GameViewModel(
                 stability = result.stability,
                 newHighScore = state.newHighScore || highScore > state.highScore,
                 stack = state.stack + result.landedPiece,
-                activePiece = createActivePiece(result.landedPiece.top),
+                activePiece = createActivePiece(result.landedPiece.top, state.activeSnackSet),
                 placementMessage = if (result.stability < 0.35f) {
                     PlacementMessage.Unstable
                 } else null,
@@ -267,8 +317,8 @@ class GameViewModel(
         }
     }
 
-    private fun createActivePiece(towerTop: Float): ActivePiece {
-        val kinds = playableKinds
+    private fun createActivePiece(towerTop: Float, snackSet: SnackSet): ActivePiece {
+        val kinds = snackSet.pieces
         val kind = kinds[(nextPieceId - 1) % kinds.size]
         val id = nextPieceId++
         val (width, height) = pieceSize(kind)
@@ -286,7 +336,4 @@ class GameViewModel(
         )
     }
 
-    private companion object {
-        val playableKinds = PieceKind.entries.filterNot { it == PieceKind.Basket }
-    }
 }

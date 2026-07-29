@@ -4,7 +4,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
 import com.partitionsoft.stacksy.core.design.StacksyTheme
@@ -93,5 +95,51 @@ class GameScreenTest {
         }
 
         composeRule.onNodeWithTag("celebration_banner").assertIsDisplayed()
+    }
+
+    @Test
+    fun gameOverOffersOneRewardedContinue() {
+        var continued = false
+        composeRule.setContent {
+            StacksyTheme {
+                GameScreen(
+                    uiState = GameUiState(status = GameStatus.GameOver),
+                    onFrame = {},
+                    onDrop = { _ -> },
+                    onPause = {},
+                    onResume = {},
+                    onRestart = {},
+                    onContinue = { continued = true },
+                    rewardedReady = true,
+                    onHome = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithTag("continue_button").assertIsDisplayed().performClick()
+        composeRule.runOnIdle { assertTrue(continued) }
+    }
+
+    @Test
+    fun continuedGameDoesNotOfferAnotherContinue() {
+        composeRule.setContent {
+            StacksyTheme {
+                GameScreen(
+                    uiState = GameUiState(
+                        status = GameStatus.GameOver,
+                        continueUsed = true,
+                    ),
+                    onFrame = {},
+                    onDrop = { _ -> },
+                    onPause = {},
+                    onResume = {},
+                    onRestart = {},
+                    rewardedReady = true,
+                    onHome = {},
+                )
+            }
+        }
+
+        composeRule.onAllNodesWithTag("continue_button").assertCountEquals(0)
     }
 }

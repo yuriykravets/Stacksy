@@ -4,6 +4,28 @@
     <string name="play">Play</string>
     <string name="home">Home</string>
     <string name="settings">Settings</string>
+    <string name="snack_collection">Snack Collection</string>
+    <string name="choose_snack_set">Choose the snacks for your next run</string>
+    <string name="current_set">Current set: %1$s</string>
+    <string name="classic_snacks">Classic Snacks</string>
+    <string name="classic_snacks_description">The original Stacksy favorites. Always free.</string>
+    <string name="sushi_party">Sushi Party</string>
+    <string name="sushi_party_description">Sushi, ramen, bento, and more.</string>
+    <string name="sweet_dreams">Sweet Dreams</string>
+    <string name="sweet_dreams_description">A colorful tower of desserts and candy.</string>
+    <string name="tropical_mix">Tropical Mix</string>
+    <string name="tropical_mix_description">Bright fruit for a sunny stack.</string>
+    <string name="free">Free</string>
+    <string name="snack_set_selected">Selected</string>
+    <plurals name="runs_left">
+        <item quantity="one">%1$d run left</item>
+        <item quantity="other">%1$d runs left</item>
+    </plurals>
+    <string name="select_set">Use this set</string>
+    <string name="watch_ad_unlock">Watch ad · unlock 3 runs</string>
+    <string name="ad_loading">Ad loading…</string>
+    <string name="ad_unavailable">Ad unavailable</string>
+    <string name="back">Back</string>
     <string name="close">Close</string>
     <string name="high_score">High score</string>
     <string name="high_score_value">High score: %1$d</string>
@@ -14,6 +36,8 @@
     <string name="sound_description">Play arcade sound effects</string>
     <string name="vibration">Vibration</string>
     <string name="vibration_description">Use haptic feedback for drops and combos</string>
+    <string name="privacy_options">Privacy options</string>
+    <string name="privacy_options_description">Review your advertising privacy choices</string>
     <string name="tap_to_drop">Tap anywhere to drop</string>
     <string name="drop_piece">Drop the moving object</string>
     <string name="pause">Pause</string>
@@ -22,6 +46,8 @@
     <string name="game_over">Game over</string>
     <string name="new_high_score">New high score!</string>
     <string name="restart">Play again</string>
+    <string name="watch_ad_continue">Watch ad to continue</string>
+    <string name="continue_description">One rewarded continue is available per game.</string>
     <string name="combo_celebration">Perfect! Combo ×%1$d</string>
     <string name="speed_up">Speed up! %1$.1f×</string>
     <string name="unstable">Careful…</string>

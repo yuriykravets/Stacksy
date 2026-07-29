@@ -173,7 +173,7 @@ private fun DrawScope.drawPiece(
     )
     emojiPaint.textSize = height * 0.76f
     drawContext.canvas.nativeCanvas.drawText(
-        pieceSymbol(piece.kind),
+        piece.kind.emoji,
         centerX,
         top + height * 0.76f,
         emojiPaint,
@@ -202,17 +202,19 @@ private fun pieceColor(kind: PieceKind): Color = when (kind) {
     PieceKind.Cookie -> Color(0xFFD99A5B)
     PieceKind.Watermelon -> Color(0xFF5CCB7A)
     PieceKind.Present -> Color(0xFFFF6B6B)
-}
-
-private fun pieceSymbol(kind: PieceKind): String = when (kind) {
-    PieceKind.Basket -> "🧺"
-    PieceKind.Donut -> "🍩"
-    PieceKind.Burger -> "🍔"
-    PieceKind.Cheese -> "🧀"
-    PieceKind.Cupcake -> "🧁"
-    PieceKind.Pizza -> "🍕"
-    PieceKind.Fries -> "🍟"
-    PieceKind.Cookie -> "🍪"
-    PieceKind.Watermelon -> "🍉"
-    PieceKind.Present -> "🎁"
+    PieceKind.Sushi -> Color(0xFFFF9E80)
+    PieceKind.RiceBall -> Color(0xFFE8E4DC)
+    PieceKind.Shrimp -> Color(0xFFFF8A80)
+    PieceKind.Ramen -> Color(0xFFFFC857)
+    PieceKind.Bento -> Color(0xFFB07A5A)
+    PieceKind.Cake -> Color(0xFFFFA8C5)
+    PieceKind.Candy -> Color(0xFF80DEEA)
+    PieceKind.IceCream -> Color(0xFFCE93D8)
+    PieceKind.Chocolate -> Color(0xFF8D6E63)
+    PieceKind.Lollipop -> Color(0xFFFF80AB)
+    PieceKind.Pineapple -> Color(0xFFFFD54F)
+    PieceKind.Mango -> Color(0xFFFFB74D)
+    PieceKind.Coconut -> Color(0xFFA1887F)
+    PieceKind.Banana -> Color(0xFFFFEE58)
+    PieceKind.Kiwi -> Color(0xFF9CCC65)
 }

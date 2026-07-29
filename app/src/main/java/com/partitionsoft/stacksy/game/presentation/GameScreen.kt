@@ -56,6 +56,9 @@ fun GameScreen(
     onRestart: () -> Unit,
     onHome: () -> Unit,
     modifier: Modifier = Modifier,
+    onContinue: () -> Unit = {},
+    rewardedReady: Boolean = false,
+    rewardedLoading: Boolean = false,
 ) {
     Box(
         modifier = modifier
@@ -123,6 +126,10 @@ fun GameScreen(
                 score = uiState.score,
                 highScore = uiState.highScore,
                 isNewHighScore = uiState.newHighScore,
+                continueUsed = uiState.continueUsed,
+                rewardedReady = rewardedReady,
+                rewardedLoading = rewardedLoading,
+                onContinue = onContinue,
                 onRestart = onRestart,
                 onHome = onHome,
             )
@@ -263,6 +270,10 @@ private fun GameOverOverlay(
     score: Int,
     highScore: Int,
     isNewHighScore: Boolean,
+    continueUsed: Boolean,
+    rewardedReady: Boolean,
+    rewardedLoading: Boolean,
+    onContinue: () -> Unit,
     onRestart: () -> Unit,
     onHome: () -> Unit,
 ) {
@@ -283,7 +294,34 @@ private fun GameOverOverlay(
         Text(stringResource(R.string.score_value, score), style = MaterialTheme.typography.titleLarge)
         Text(stringResource(R.string.high_score_value, highScore))
         Spacer(Modifier.height(20.dp))
-        Button(
+        if (!continueUsed) {
+            Text(
+                text = stringResource(R.string.continue_description),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Spacer(Modifier.height(10.dp))
+            Button(
+                onClick = onContinue,
+                enabled = rewardedReady,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag("continue_button"),
+            ) {
+                Text(
+                    stringResource(
+                        when {
+                            rewardedReady -> R.string.watch_ad_continue
+                            rewardedLoading -> R.string.ad_loading
+                            else -> R.string.ad_unavailable
+                        }
+                    )
+                )
+            }
+            Spacer(Modifier.height(8.dp))
+        }
+        OutlinedButton(
             onClick = onRestart,
             modifier = Modifier
                 .fillMaxWidth()

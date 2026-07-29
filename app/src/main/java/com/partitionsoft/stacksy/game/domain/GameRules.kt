@@ -107,4 +107,19 @@ fun pieceSize(kind: PieceKind): Pair<Float, Float> = when (kind) {
     PieceKind.Cookie -> 0.20f to 0.10f
     PieceKind.Watermelon -> 0.23f to 0.11f
     PieceKind.Present -> 0.20f to 0.12f
+    PieceKind.Sushi -> 0.21f to 0.10f
+    PieceKind.RiceBall -> 0.20f to 0.12f
+    PieceKind.Shrimp -> 0.23f to 0.10f
+    PieceKind.Ramen -> 0.25f to 0.12f
+    PieceKind.Bento -> 0.24f to 0.11f
+    PieceKind.Cake -> 0.23f to 0.12f
+    PieceKind.Candy -> 0.19f to 0.10f
+    PieceKind.IceCream -> 0.20f to 0.13f
+    PieceKind.Chocolate -> 0.22f to 0.10f
+    PieceKind.Lollipop -> 0.18f to 0.13f
+    PieceKind.Pineapple -> 0.21f to 0.13f
+    PieceKind.Mango -> 0.21f to 0.11f
+    PieceKind.Coconut -> 0.21f to 0.11f
+    PieceKind.Banana -> 0.24f to 0.10f
+    PieceKind.Kiwi -> 0.20f to 0.10f
 }

@@ -69,4 +69,29 @@ class StacksyAppTest {
 
         composeRule.runOnIdle { assertFalse(state.soundEnabled) }
     }
+
+    @Test
+    fun collectionOpensFromHomeAndReturns() {
+        composeRule.setContent {
+            StacksyTheme {
+                StacksyContent(
+                    uiState = GameUiState(),
+                    onPlay = {},
+                    onFrame = {},
+                    onDrop = { _ -> },
+                    onPause = {},
+                    onResume = {},
+                    onRestart = {},
+                    onExitGame = {},
+                    onSoundChanged = {},
+                    onVibrationChanged = {},
+                )
+            }
+        }
+
+        composeRule.onNodeWithTag("collection_button").performClick()
+        composeRule.onNodeWithTag("snack_collection_screen").assertIsDisplayed()
+        composeRule.onNodeWithTag("collection_back").performClick()
+        composeRule.onNodeWithTag("play_button").assertIsDisplayed()
+    }
 }
